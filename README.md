@@ -15,10 +15,8 @@ prepared by either MinKNOW or Guppy. The workflow needs to know the primer
 scheme that has been used during genome amplification and library preparation
 e.g. `ARTIC/V3` or `ONT_Midnight/V1`. Other parameters can be specified too e.g.
 assign sample names to the barcodes or to adjust the length distribution of
-acceptable amplicon sequences. The Medaka variant model is selected based on the
-provided basecaller configuration (using the parameter `--basecaller_cfg`), or
-alternatively the Medaka model can be provided directly via the `--medaka_variant_model`
-parameter.
+acceptable amplicon sequences.
+
 
 
 
@@ -43,35 +41,63 @@ ARM processor support: False
 
 ## Install and run
 
-These are instructions to install and run the workflow on command line. You can also access the workflow via the [EPI2ME application](https://labs.epi2me.io/downloads/).  
 
-The workflow uses [nextflow](https://www.nextflow.io/) to manage compute and software resources, therefore nextflow will need to be installed before attempting to run the workflow. 
+These are instructions to install and run the workflow on command line.
+You can also access the workflow via the
+[EPI2ME Desktop application](https://labs.epi2me.io/downloads/).
 
-The workflow can currently be run using either [Docker](https://www.docker.com/products/docker-desktop) or
-[singularity](https://docs.sylabs.io/guides/3.0/user-guide/index.html) to provide isolation of 
-the required software. Both methods are automated out-of-the-box provided 
-either docker or singularity is installed. This is controlled by the [`-profile`](https://www.nextflow.io/docs/latest/config.html#config-profiles) parameter as exemplified below. 
+The workflow uses [Nextflow](https://www.nextflow.io/) to manage
+compute and software resources,
+therefore Nextflow will need to be
+installed before attempting to run the workflow.
 
-It is not required to clone or download the git repository in order to run the workflow. 
-More information on running EPI2ME workflows can be found on our [website](https://labs.epi2me.io/wfindex).
+The workflow can currently be run using either
+[Docker](https://www.docker.com/products/docker-desktop)
+or [Singularity](https://docs.sylabs.io/guides/3.0/user-guide/index.html)
+to provide isolation of the required software.
+Both methods are automated out-of-the-box provided
+either Docker or Singularity is installed.
+This is controlled by the
+[`-profile`](https://www.nextflow.io/docs/latest/config.html#config-profiles)
+parameter as exemplified below.
 
-The following command can be used to obtain the workflow. This will pull the repository in to the assets folder of nextflow and provide a list of all parameters available for the workflow as well as an example command:
+It is not required to clone or download the git repository
+in order to run the workflow.
+More information on running EPI2ME workflows can
+be found on our [website](https://labs.epi2me.io/wfindex).
+
+The following command can be used to obtain the workflow.
+This will pull the repository in to the assets folder of
+Nextflow and provide a list of all parameters
+available for the workflow as well as an example command:
 
 ```
-nextflow run epi2me-labs/wf-artic -–help 
+nextflow run epi2me-labs/wf-artic --help
 ```
-A demo dataset is provided for testing of the workflow. It can be downloaded using: 
+To update a workflow to the latest version on the command line use
+the following command:
+```
+nextflow pull epi2me-labs/wf-artic
+```
+
+A demo dataset is provided for testing of the workflow.
+It can be downloaded and unpacked using the following commands:
 ```
 wget https://ont-exd-int-s3-euwst1-epi2me-labs.s3.amazonaws.com/wf-artic/wf-artic-demo.tar.gz
-tar -xzvf wf-artic-demo.tar.gz 
+tar -xzvf wf-artic-demo.tar.gz
 ```
-The workflow can be run with the demo data using: 
+The workflow can then be run with the downloaded demo data using:
 ```
-nextflow run epi2me-labs/wf-artic \ 
---fastq test_data/reads.fastq.gz \
--profile standard 
+nextflow run epi2me-labs/wf-artic \
+	--fastq 'wf-artic-demo/fastq' \
+	--sample_sheet 'wf-artic-demo/sample_sheet.csv' \
+	--scheme_name 'SARS-CoV-2' \
+	--scheme_version 'Midnight-ONT/V3' \
+	-profile standard
 ```
-For further information about running a workflow on the cmd line see https://labs.epi2me.io/wfquickstart/  
+
+For further information about running a workflow on
+the command line see https://labs.epi2me.io/wfquickstart/
 
 
 
@@ -116,7 +142,6 @@ input_reads.fastq   ─── input_directory  ─── input_directory
 |--------------------------|------|-------------|------|---------|
 | fastq | string | FASTQ files to use in the analysis. | This accepts one of three cases: (i) the path to a single FASTQ file; (ii) the path to a top-level directory containing FASTQ files; (iii) the path to a directory containing one level of sub-directories which in turn contain FASTQ files. In the first and second case, a sample name can be supplied with `--sample`. In the last case, the data is assumed to be multiplexed with the names of the sub-directories as barcodes. In this case, a sample sheet can be provided with `--sample_sheet`. |  |
 | analyse_unclassified | boolean | Analyse unclassified reads from input directory. By default the workflow will not process reads in the unclassified directory. | If selected and if the input is a multiplex directory the workflow will also process the unclassified directory. | False |
-| basecaller_cfg | string | Name of the model that was used to basecall signal data, used to select an appropriate Medaka model. | The basecaller configuration is used to automatically select the appropriate Medaka model. The automatic selection can be overridden with the 'medaka_variant_model' and 'medaka_consensus_model' parameters. The model list only shows models that are compatible with this workflow. | dna_r9.4.1_450bps_hac |
 
 
 ### Primer Scheme Selection
@@ -169,7 +194,7 @@ input_reads.fastq   ─── input_directory  ─── input_directory
 | pangolin_options | string | Pass options to Pangolin, for example "--analysis-mode fast --min-length 26000". |  |  |
 | nextclade_data_tag | string | The tag of the nextclade data packet |  |  |
 | normalise | integer | Depth ceiling for depth of coverage normalisation |  | 200 |
-| medaka_variant_model | string | The name of a Medaka variant model to use. This name will override the model automatically chosen based on the provided basecaller configuration. | The workflow will attempt to map the basecalling model used to a suitable Medaka variant model. You can override this by providing a model with this option instead. |  |
+| override_basecaller_cfg | string | Override auto-detected basecaller model that processed the signal data; used to select an appropriate Medaka model. | Per default, the workflow tries to determine the basecall model from the input data. This parameter can be used to override the detected value (or to provide a model name if none was found in the inputs). However, users should only do this if they know for certain which model was used as selecting the wrong option might give sub-optimal results. A list of recent models can be found here: https://github.com/nanoporetech/dorado#DNA-models. |  |
 
 
 ### Miscellaneous Options
@@ -178,7 +203,6 @@ input_reads.fastq   ─── input_directory  ─── input_directory
 |--------------------------|------|-------------|------|---------|
 | lab_id | string | Laboratory identifier, used in reporting. |  |  |
 | testkit | string | Test kit identifier, used in reporting. |  |  |
-| disable_ping | boolean | Enable to prevent sending a workflow ping. |  | False |
 
 
 

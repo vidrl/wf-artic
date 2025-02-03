@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.2.2]
+### Changed
+- Reconcile workflow with wf-template v5.2.6
+
+## [v1.2.1]
+### Changed
+- Reconcile workflow with wf-template v5.2.5
+
+## [v1.2.0]
+### Added
+- Logging to file for artic commands (`{barcode}.artic.log.txt`)
+- `--override_basecaller_cfg` parameter for cases where automatic basecall model detection fails or users wish to override the automatic choice
+### Removed
+- Unused `nextclade_version` parameter
+- The `--medaka_variant_model` parameter as the appropriate Medaka model is now automatically determined from the input data
+- The now redundant `--basecaller_cfg` parameter as its value is now automatically detected from the input data on a per-sample basis
+### Changed
+- Reconciled workflow with wf-template v5.2.1
+- Updated Medaka to v1.12.1
+
 ## [v1.1.0]
 ### Updated
 - Nextclade updated to V3
@@ -24,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v0.3.32]
 ### Fixed
-- reporting of sequence summaries crashing with `TypeError`  
+- reporting of sequence summaries crashing with `TypeError`
 - sed error when writing to tmp
 
 ## [v0.3.31]
