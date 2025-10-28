@@ -224,7 +224,12 @@
                 "update_data": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Update Pangolin and Nextclade data at runtime."
+                    "description": "Update Nextclade data at runtime."
+                },
+                "update__pango_data": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Update Pangolin data at runtime."
                 },
                 "pangolin_options": {
                     "type": "string",
