@@ -334,9 +334,9 @@ process pangolin {
         path "lineage_report.csv", emit: report
         path "pangolin.version", emit: version
     """
-    if [ "$params.update_data" == "true" ]
+    if [ "$params.update_pango_data" == "true" ]
     then
-      pangolin --update
+      pangolin --update-data
     fi
     
     # set cache for snakemake to prevent permission issuses
